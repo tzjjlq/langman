@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>给你的星云之恋</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #2a1a3e, #0d0d1f);
+            font-family: 'Georgia', serif;
+            color: #fff;
+        }
+
+        #scene-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(255, 182, 193, 0.8);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffb6c1, 0 0 20px #ff69b4; }
+            to { text-shadow: 0 0 20px #ff1493, 0 0 30px #ff4500; }
+        }
+
+        p {
+            font-size: 1.8em;
+            max-width: 800px;
+            margin: 20px;
+            line-height: 1.4;
+            opacity: 0;
+            animation: fadeInText 2s ease forwards;
+        }
+
+        @keyframes fadeInText {
+            to { opacity: 1; }
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            margin: 10px;
+            background: rgba(255, 105, 180, 0.8);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
+        }
+
+        #particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 5s infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100vh); opacity: 0; }
+        }
+
+        .firework {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: explode 1.5s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scene-container"></div>
+    <div id="particles"></div>
+
+    <!-- 剧情章节 -->
+    <div id="chapter1" class="overlay active">
+        <h1>第一章：星云的低语</h1>
+        <p>在一个安静的夜晚，我仰望星空，远处星云闪烁着微光。那一刻，我仿佛听见宇宙在轻声诉说你的名字。</p>
+        <div class="buttons">
+            <button onclick="goToChapter(2)">继续聆听</button>
+        </div>
+    </div>
+
+    <div id="chapter2" class="overlay">
+        <h1>第二章：初见的涟漪</h1>
+        <p>第一次见到你，时间仿佛慢了下来。你的笑容像流星划过，点亮了我沉寂已久的心。</p>
+        <div class="buttons">
+            <button onclick="goToChapter(3, 'yes')">我也记得那一天</button>
+            <button onclick="goToChapter(3, 'no')">那天发生了什么？</button>
+        </div>
+    </div>
+
+    <div id="chapter3" class="overlay">
+        <h1>第三章：心跳的旋律</h1>
+        <p id="chapter3-text">从那天起，我的世界多了你的影子。每一次心跳，都像在为你的存在谱写一首浪漫的曲子。</p>
+        <div class="buttons">
+            <button onclick="goToChapter(4)">继续</button>
+        </div>
+    </div>
+
+    <div id="chapter4" class="overlay">
+        <h1>第四章：星河的约定</h1>
+        <p>我曾在星空下许愿，希望能遇见一个像你这样的人。现在，我想知道，你是否也曾在某处许下同样的愿望？</p>
+        <div class="buttons">
+            <button onclick="goToChapter(5, 'yes')">是的，我许过</button>
+            <button onclick="goToChapter(5, 'no')">我现在想许一个</button>
+        </div>
+    </div>
+
+    <div id="chapter5" class="overlay">
+        <h1>第五章：时光的见证</h1>
+        <p id="chapter5-text">岁月流转，我发现你早已成为我生命中最亮的星云。即使世界变幻，我对你的心意从未动摇。</p>
+        <div class="buttons">
+            <button onclick="goToChapter(6)">继续</button>
+        </div>
+    </div>
+
+    <div id="chapter6" class="overlay">
+        <h1>第六章：爱的星光</h1>
+        <p>我想为你点亮每一颗星星，把它们串成一条银河，只为告诉你：你是我此生唯一的宇宙。</p>
+        <div class="buttons">
+            <button onclick="goToChapter(7)">我想听你的答案</button>
+        </div>
+    </div>
+
+    <div id="chapter7" class="overlay">
+        <h1>最终章：永恒的承诺</h1>
+        <p id="chapter7-text">你愿意让我牵着你的手，走过每一个星光闪烁的夜晚吗？无论多久，我都会在这里等你说“Yes”。</p>
+        <div class="buttons">
+            <button onclick="goToChapter(8)">Yes</button>
+        </div>
+    </div>
+
+    <div id="chapter8" class="overlay">
+        <h1>尾声：我们的星辰大海</h1>
+        <p>你说了“Yes”，我的世界瞬间绽放。从今往后，我们将一起书写属于我们的星辰大海，永远不分离。</p>
+        <div class="buttons">
+            <button onclick="restart()">再感受一次</button>
+        </div>
+    </div>
+
+    <!-- 背景音乐：替换为 Pixabay 的浪漫钢琴曲 -->
+    <audio id="backgroundMusic" loop>
+        <source src="https://cdn.pixabay.com/audio/2023/08/25/audio_140825_20230825_0945.mp3" type="audio/mpeg">
+        你的浏览器不支持音频播放。
+    </audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script>
+        // Three.js 场景
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('scene-container').appendChild(renderer.domElement);
+
+        // 星云背景
+        const nebulaGeometry = new THREE.BufferGeometry();
+        const nebulaCount = 5000;
+        const nebulaPositions = new Float32Array(nebulaCount * 3);
+        const colors = new Float32Array(nebulaCount * 3);
+        for (let i = 0; i < nebulaCount; i++) {
+            nebulaPositions[i * 3] = (Math.random() - 0.5) * 3000;
+            nebulaPositions[i * 3 + 1] = (Math.random() - 0.5) * 3000;
+            nebulaPositions[i * 3 + 2] = (Math.random() - 0.5) * 3000;
+            const hue = Math.random() * 0.3 + 0.8; // 偏粉紫色调
+            colors[i * 3] = hue;
+            colors[i * 3 + 1] = 0.8;
+            colors[i * 3 + 2] = 1.0;
+        }
+        nebulaGeometry.setAttribute('position', new THREE.BufferAttribute(nebulaPositions, 3));
+        nebulaGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        const nebulaMaterial = new THREE.PointsMaterial({ size: 3, vertexColors: true, transparent: true, opacity: 0.7 });
+        const nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
+        scene.add(nebula);
+
+        // 多颗心形
+        const heartShape = new THREE.Shape();
+        const x = -2, y = -4;
+        heartShape.moveTo(x + 2, y + 2);
+        heartShape.bezierCurveTo(x + 2, y + 2, x + 1.6, y, x, y);
+        heartShape.bezierCurveTo(x - 2.4, y, x - 2.4, y + 2.8, x - 2.4, y + 2.8);
+        heartShape.bezierCurveTo(x - 2.4, y + 4.4, x - 1.2, y + 6.2, x + 2, y + 7.6);
+        heartShape.bezierCurveTo(x + 4.8, y + 6.2, x + 6.4, y + 3.6, x + 6.4, y + 2.8);
+        heartShape.bezierCurveTo(x + 6.4, y + 2.8, x + 6.4, y, x + 4, y);
+        heartShape.bezierCurveTo(x + 2.8, y, x + 2, y + 2, x + 2, y + 2);
+        const heartGeometry = new THREE.ExtrudeGeometry(heartShape, { depth: 1.5, bevelEnabled: true });
+        const heartMaterial = new THREE.MeshPhongMaterial({ color: 0xff69b4, shininess: 100, transparent: true, opacity: 0.9 });
+        
+        const hearts = [];
+        for (let i = 0; i < 5; i++) {
+            const heart = new THREE.Mesh(heartGeometry, heartMaterial);
+            heart.position.set((i - 2) * 10, 0, 0);
+            heart.scale.set(0.5, 0.5, 0.5);
+            scene.add(heart);
+            hearts.push(heart);
+        }
+
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+
+        camera.position.z = 30;
+
+        // 动画
+        function animate() {
+            requestAnimationFrame(animate);
+            nebula.rotation.y += 0.001;
+            hearts.forEach((heart, index) => {
+                heart.rotation.x += 0.01 + index * 0.002;
+                heart.rotation.y += 0.01 + index * 0.002;
+            });
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 粒子效果
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.getElementById('particles').appendChild(particle);
+            setTimeout(() => particle.remove(), 5000);
+        }
+        setInterval(createParticle, 150);
+
+        // 烟花效果
+        function createFirework() {
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = Math.random() * 100 + 'vw';
+            firework.style.top = Math.random() * 100 + 'vh';
+            firework.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            document.getElementById('particles').appendChild(firework);
+            setTimeout(() => firework.remove(), 1500);
+        }
+
+        // 剧情推进
+        let userChoices = {};
+        function goToChapter(chapter, choice = null) {
+            for (let i = 1; i <= 8; i++) {
+                document.getElementById(`chapter${i}`).classList.remove('active');
+            }
+            document.getElementById(`chapter${chapter}`).classList.add('active');
+
+            if (chapter === 1) {
+                hearts.forEach(heart => heart.scale.set(0.5, 0.5, 0.5));
+            } else if (chapter === 2) {
+                document.getElementById('backgroundMusic').play();
+                hearts.forEach(heart => heart.scale.set(0.7, 0.7, 0.7));
+                if (choice) userChoices['chapter2'] = choice;
+            } else if (chapter === 3) {
+                const text = userChoices['chapter2'] === 'yes'
+                    ? '从那天起，我的世界多了你的影子。你说你也记得那天，我的心跳几乎要跃出胸膛。'
+                    : '从那天起，我的世界多了你的影子。即使你不记得那天，我也会用一生让你记住我的心意。';
+                document.getElementById('chapter3-text').innerHTML = text;
+                hearts.forEach(heart => heart.scale.set(1, 1, 1));
+            } else if (chapter === 4 && choice) {
+                userChoices['chapter4'] = choice;
+                hearts.forEach(heart => heart.scale.set(1.2, 1.2, 1.2));
+            } else if (chapter === 5) {
+                const text = userChoices['chapter4'] === 'yes'
+                    ? '岁月流转，我发现你早已成为我生命中最亮的星云。你说你也许过愿，我们的心早已在星河中相连。'
+                    : '岁月流转，我发现你早已成为我生命中最亮的星云。你说你现在想许愿，那就让我的爱成为你的答案吧。';
+                document.getElementById('chapter5-text').innerHTML = text;
+                hearts.forEach(heart => heart.scale.set(1.5, 1.5, 1.5));
+            } else if (chapter === 6) {
+                hearts.forEach(heart => heart.scale.set(1.8, 1.8, 1.8));
+            } else if (chapter === 7) {
+                hearts.forEach(heart => heart.scale.set(2, 2, 2));
+            } else if (chapter === 8) {
+                setInterval(createFirework, 200); // 烟花庆祝
+                hearts.forEach(heart => heart.scale.set(2.5, 2.5, 2.5));
+            }
+        }
+
+        // 重启
+        function restart() {
+            userChoices = {};
+            goToChapter(1);
+            hearts.forEach(heart => heart.scale.set(0.5, 0.5, 0.5));
+        }
+
+        // 自适应
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
