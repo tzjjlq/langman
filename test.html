@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>给你的永恒告白</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: #1a1a2e;
+            font-family: 'Georgia', serif;
+            color: #fff;
+        }
+
+        #scene-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(255, 182, 193, 0.8);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffb6c1, 0 0 20px #ff69b4; }
+            to { text-shadow: 0 0 20px #ff1493, 0 0 30px #ff4500; }
+        }
+
+        p {
+            font-size: 1.8em;
+            max-width: 600px;
+            margin: 20px;
+            line-height: 1.4;
+            opacity: 0;
+            animation: fadeInText 2s ease forwards;
+        }
+
+        @keyframes fadeInText {
+            to { opacity: 1; }
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background: rgba(255, 105, 180, 0.8);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
+        }
+
+        #stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scene-container"></div>
+    <div id="stars"></div>
+    <div id="overlay1" class="overlay active">
+        <h1>你是我漫天的星光</h1>
+        <p>在无数个夜晚，我抬头望天，只因那里有你的影子。</p>
+        <button onclick="nextScene()">继续</button>
+    </div>
+    <div id="overlay2" class="overlay">
+        <h1>你是我的宇宙</h1>
+        <p>如果时间有尽头，我愿它停在你微笑的那一刻，<br>因为你，是我生命的奇迹。</p>
+        <button onclick="finalScene()">继续</button>
+    </div>
+    <div id="overlay3" class="overlay">
+        <h1>我想问你...</h1>
+        <p>愿不愿意让我用余生的时光，<br>为你点亮每一颗星星，陪你看遍人间烟火？</p>
+    </div>
+
+    <audio id="backgroundMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script>
+        // Three.js 3D 场景
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('scene-container').appendChild(renderer.domElement);
+
+        // 添加星空粒子
+        const starGeometry = new THREE.BufferGeometry();
+        const starCount = 1000;
+        const positions = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 2000;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
+        }
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 2 });
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+
+        // 添加旋转的爱心
+        const heartShape = new THREE.Shape();
+        const x = -2.5, y = -5;
+        heartShape.moveTo(x + 2.5, y + 2.5);
+        heartShape.bezierCurveTo(x + 2.5, y + 2.5, x + 2, y, x, y);
+        heartShape.bezierCurveTo(x - 3, y, x - 3, y + 3.5, x - 3, y + 3.5);
+        heartShape.bezierCurveTo(x - 3, y + 5.5, x - 1.5, y + 7.7, x + 2.5, y + 9.5);
+        heartShape.bezierCurveTo(x + 6, y + 7.7, x + 8, y + 4.5, x + 8, y + 3.5);
+        heartShape.bezierCurveTo(x + 8, y + 3.5, x + 8, y, x + 5, y);
+        heartShape.bezierCurveTo(x + 3.5, y, x + 2.5, y + 2.5, x + 2.5, y + 2.5);
+
+        const heartGeometry = new THREE.ExtrudeGeometry(heartShape, { depth: 2, bevelEnabled: true });
+        const heartMaterial = new THREE.MeshPhongMaterial({ color: 0xff69b4, shininess: 100 });
+        const heart = new THREE.Mesh(heartGeometry, heartMaterial);
+        scene.add(heart);
+
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+
+        camera.position.z = 20;
+
+        // 动画
+        function animate() {
+            requestAnimationFrame(animate);
+            heart.rotation.x += 0.01;
+            heart.rotation.y += 0.01;
+            stars.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 场景切换
+        let currentScene = 1;
+        function nextScene() {
+            document.getElementById('overlay1').classList.remove('active');
+            document.getElementById('overlay2').classList.add('active');
+            currentScene = 2;
+            heart.scale.set(1.5, 1.5, 1.5); // 心形放大
+            document.getElementById('backgroundMusic').play();
+        }
+
+        function finalScene() {
+            document.getElementById('overlay2').classList.remove('active');
+            document.getElementById('overlay3').classList.add('active');
+            currentScene = 3;
+            heart.scale.set(2, 2, 2); // 心形再放大
+            addFireworks(); // 烟花效果
+        }
+
+        // 烟花效果
+        function addFireworks() {
+            setInterval(() => {
+                const firework = document.createElement('div');
+                firework.className = 'star';
+                firework.style.left = Math.random() * 100 + 'vw';
+                firework.style.top = Math.random() * 100 + 'vh';
+                firework.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                document.getElementById('stars').appendChild(firework);
+                setTimeout(() => firework.remove(), 2000);
+            }, 500);
+        }
+
+        // 屏幕自适应
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
